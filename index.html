@@ -1,0 +1,2106 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+    
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KBF Portal — Kemel Bolashaq Foundation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary: #0056D2;
+  --primary-dark: #003B9A;
+  --primary-light: #E8F0FE;
+  --accent: #00C9A7;
+  --accent-dark: #009E85;
+  --danger: #E53935;
+  --warning: #F9A825;
+  --success: #2E7D32;
+  --bg: #F0F4FF;
+  --surface: #FFFFFF;
+  --surface2: #F7F9FF;
+  --border: rgba(0,86,210,0.15);
+  --text: #0D1B3E;
+  --text2: #4A5680;
+  --text3: #8A93B0;
+  --shadow: 0 4px 24px rgba(0,56,180,0.10);
+  --shadow-lg: 0 8px 40px rgba(0,56,180,0.16);
+  --radius: 14px;
+  --radius-sm: 8px;
+  --font: 'Onest', sans-serif;
+  --font2: 'Space Grotesk', sans-serif;
+  --sidebar-w: 240px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+/* ===== LOGIN ===== */
+#loginScreen {
+  position: fixed; inset: 0; z-index: 9999;
+  background: linear-gradient(135deg, #001F6B 0%, #0056D2 50%, #00C9A7 100%);
+  display: flex; align-items: center; justify-content: center;
+  transition: opacity 0.5s;
+}
+.login-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  width: min(900px, 96vw); border-radius: 24px; overflow: hidden;
+  box-shadow: 0 20px 80px rgba(0,0,0,0.4);
+}
+.login-left {
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(20px);
+  padding: 60px 40px;
+  display: flex; flex-direction: column; justify-content: center;
+  border-right: 1px solid rgba(255,255,255,0.15);
+}
+.login-right {
+  background: white; padding: 60px 40px;
+  display: flex; flex-direction: column; justify-content: center;
+}
+.login-logo {
+  width: 64px; height: 64px; border-radius: 16px;
+  background: rgba(255,255,255,0.2); display: flex; align-items: center;
+  justify-content: center; margin-bottom: 24px; font-size: 28px; font-weight: 700;
+  color: white; font-family: var(--font2); border: 2px solid rgba(255,255,255,0.3);
+}
+.login-tagline { color: rgba(255,255,255,0.7); font-size: 14px; margin-top: 8px; }
+.login-title { font-size: 32px; font-weight: 700; color: white; font-family: var(--font2); line-height: 1.2; }
+.login-right h2 { font-size: 22px; font-weight: 700; color: var(--text); margin-bottom: 8px; font-family: var(--font2); }
+.login-right p { color: var(--text2); font-size: 14px; margin-bottom: 32px; }
+.role-cards { display: flex; flex-direction: column; gap: 12px; }
+.role-card {
+  display: flex; align-items: center; gap: 14px;
+  padding: 16px 20px; border-radius: var(--radius);
+  border: 2px solid var(--border); cursor: pointer;
+  transition: all 0.2s; background: var(--surface2);
+}
+.role-card:hover { border-color: var(--primary); background: var(--primary-light); }
+.role-card.active { border-color: var(--primary); background: var(--primary-light); }
+.role-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px; flex-shrink: 0;
+}
+.role-card h3 { font-size: 14px; font-weight: 600; color: var(--text); }
+.role-card p { font-size: 12px; color: var(--text2); margin-top: 2px; }
+.login-btn {
+  width: 100%; padding: 14px; background: var(--primary);
+  color: white; border: none; border-radius: var(--radius);
+  font-family: var(--font); font-size: 15px; font-weight: 600;
+  cursor: pointer; margin-top: 20px; transition: all 0.2s;
+}
+.login-btn:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,86,210,0.3); }
+.login-features { margin-top: 32px; display: flex; flex-direction: column; gap: 12px; }
+.login-feature { display: flex; align-items: center; gap: 10px; color: rgba(255,255,255,0.8); font-size: 14px; }
+.login-feature::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+
+/* ===== MAIN APP ===== */
+#app { display: none; min-height: 100vh; }
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: fixed; top: 0; left: 0; width: var(--sidebar-w);
+  height: 100vh; background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+  z-index: 100; overflow-y: auto;
+}
+.sidebar-header {
+  padding: 24px 20px 20px; border-bottom: 1px solid var(--border);
+}
+.sidebar-logo {
+  display: flex; align-items: center; gap: 10px;
+}
+.sidebar-logo-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--primary); display: flex; align-items: center;
+  justify-content: center; color: white; font-weight: 700; font-size: 14px;
+  font-family: var(--font2); flex-shrink: 0;
+}
+.sidebar-logo-text { font-weight: 700; font-size: 15px; color: var(--text); font-family: var(--font2); }
+.sidebar-logo-sub { font-size: 11px; color: var(--text3); }
+.sidebar-user {
+  margin: 16px 20px 0; padding: 12px;
+  background: var(--surface2); border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+.sidebar-user-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.sidebar-user-role {
+  font-size: 11px; margin-top: 2px;
+  display: inline-block; padding: 2px 8px; border-radius: 99px;
+  font-weight: 500;
+}
+.role-mentor { background: rgba(0,86,210,0.1); color: var(--primary); }
+.role-student { background: rgba(0,201,167,0.1); color: var(--accent-dark); }
+.role-guest { background: rgba(249,168,37,0.1); color: #B35B00; }
+
+.sidebar-nav { padding: 16px 12px; flex: 1; }
+.nav-section-label {
+  font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.1em; color: var(--text3);
+  padding: 0 8px; margin-bottom: 6px; margin-top: 16px;
+}
+.nav-section-label:first-child { margin-top: 0; }
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 10px; border-radius: var(--radius-sm);
+  cursor: pointer; color: var(--text2); font-size: 14px; font-weight: 500;
+  transition: all 0.15s; margin-bottom: 2px; border: none; background: none;
+  width: 100%; text-align: left;
+}
+.nav-item:hover { background: var(--surface2); color: var(--text); }
+.nav-item.active { background: var(--primary-light); color: var(--primary); font-weight: 600; }
+.nav-item svg { width: 18px; height: 18px; flex-shrink: 0; opacity: 0.7; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge {
+  margin-left: auto; font-size: 10px; font-weight: 700;
+  background: var(--primary); color: white;
+  padding: 1px 6px; border-radius: 99px; min-width: 18px; text-align: center;
+}
+
+.sidebar-footer {
+  padding: 16px; border-top: 1px solid var(--border);
+}
+.logout-btn {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 9px 10px; border-radius: var(--radius-sm);
+  border: none; background: none; cursor: pointer;
+  color: var(--danger); font-size: 14px; font-family: var(--font);
+  transition: background 0.15s;
+}
+.logout-btn:hover { background: #FEEBEE; }
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  margin-left: var(--sidebar-w);
+  min-height: 100vh; padding: 32px;
+}
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  display: flex; align-items: flex-start;
+  justify-content: space-between; margin-bottom: 28px;
+  flex-wrap: wrap; gap: 16px;
+}
+.page-header h1 { font-size: 26px; font-weight: 700; font-family: var(--font2); color: var(--text); }
+.page-header p { font-size: 14px; color: var(--text2); margin-top: 4px; }
+.header-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  font-family: var(--font); font-size: 14px; font-weight: 600;
+  cursor: pointer; border: none; transition: all 0.2s;
+}
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,86,210,0.3); }
+.btn-secondary { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { background: var(--surface2); border-color: var(--primary); }
+.btn-danger { background: var(--danger); color: white; }
+.btn-danger:hover { background: #C62828; }
+.btn-success { background: var(--success); color: white; }
+.btn-sm { padding: 6px 12px; font-size: 13px; }
+.btn-icon { padding: 8px; width: 36px; height: 36px; justify-content: center; }
+
+/* ===== STAT CARDS ===== */
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 20px 24px;
+  box-shadow: var(--shadow);
+}
+.stat-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); }
+.stat-value { font-size: 32px; font-weight: 700; font-family: var(--font2); color: var(--text); margin-top: 4px; }
+.stat-sub { font-size: 12px; color: var(--text2); margin-top: 4px; }
+.stat-chip {
+  display: inline-block; padding: 2px 8px; border-radius: 99px;
+  font-size: 11px; font-weight: 600; margin-top: 8px;
+}
+.chip-up { background: rgba(46,125,50,0.1); color: var(--success); }
+.chip-down { background: rgba(229,57,53,0.1); color: var(--danger); }
+
+/* ===== TABLE ===== */
+.table-card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.table-toolbar {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.table-toolbar h3 { font-size: 15px; font-weight: 700; flex: 1; }
+.search-input {
+  padding: 8px 14px 8px 36px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); font-family: var(--font);
+  font-size: 14px; background: var(--surface2); color: var(--text);
+  width: 220px; outline: none; transition: border 0.2s;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%238A93B0' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.099zm-5.242 1.656a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: 12px center;
+}
+.search-input:focus { border-color: var(--primary); }
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--surface2); }
+th { padding: 12px 16px; text-align: left; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); white-space: nowrap; }
+td { padding: 13px 16px; font-size: 14px; color: var(--text); border-top: 1px solid var(--border); }
+tr:hover td { background: var(--surface2); }
+.td-actions { display: flex; gap: 6px; }
+
+/* ===== BADGE ===== */
+.badge {
+  display: inline-flex; align-items: center; padding: 3px 10px;
+  border-radius: 99px; font-size: 12px; font-weight: 600;
+}
+.badge-blue { background: rgba(0,86,210,0.1); color: var(--primary); }
+.badge-green { background: rgba(46,125,50,0.1); color: var(--success); }
+.badge-amber { background: rgba(249,168,37,0.15); color: #B35B00; }
+.badge-red { background: rgba(229,57,53,0.1); color: var(--danger); }
+.badge-gray { background: rgba(0,0,0,0.07); color: var(--text2); }
+.badge-teal { background: rgba(0,201,167,0.1); color: var(--accent-dark); }
+
+/* ===== AVATAR ===== */
+.avatar {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+}
+.td-user { display: flex; align-items: center; gap: 10px; }
+.td-user-info { line-height: 1.3; }
+.td-user-name { font-weight: 600; font-size: 14px; }
+.td-user-sub { font-size: 12px; color: var(--text3); }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+  z-index: 8000; align-items: center; justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: var(--surface); border-radius: 20px;
+  box-shadow: var(--shadow-lg); width: min(560px, 95vw);
+  max-height: 90vh; overflow-y: auto;
+}
+.modal-header {
+  padding: 24px 28px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-header h2 { font-size: 18px; font-weight: 700; font-family: var(--font2); }
+.modal-close {
+  width: 32px; height: 32px; border-radius: 8px; border: none;
+  background: var(--surface2); cursor: pointer; font-size: 16px;
+  display: flex; align-items: center; justify-content: center; color: var(--text2);
+}
+.modal-close:hover { background: var(--border); }
+.modal-body { padding: 24px 28px; }
+.modal-footer { padding: 16px 28px; border-top: 1px solid var(--border); display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ===== FORM ===== */
+.form-group { margin-bottom: 16px; }
+.form-label { display: block; font-size: 13px; font-weight: 600; color: var(--text2); margin-bottom: 6px; }
+.form-input, .form-select, .form-textarea {
+  width: 100%; padding: 10px 14px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); font-family: var(--font);
+  font-size: 14px; color: var(--text); background: var(--surface2);
+  outline: none; transition: border 0.2s;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--primary); background: white; }
+.form-textarea { min-height: 90px; resize: vertical; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+/* ===== TABS ===== */
+.tabs { display: flex; gap: 2px; padding: 4px; background: var(--surface2); border-radius: var(--radius-sm); margin-bottom: 24px; width: fit-content; border: 1px solid var(--border); }
+.tab {
+  padding: 8px 18px; border-radius: 6px; cursor: pointer;
+  font-size: 14px; font-weight: 500; color: var(--text2);
+  transition: all 0.2s; border: none; background: none; font-family: var(--font);
+}
+.tab.active { background: var(--surface); color: var(--primary); font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
+.tab:hover:not(.active) { color: var(--text); }
+
+/* ===== UPLOAD ZONE ===== */
+.upload-zone {
+  border: 2px dashed var(--border); border-radius: var(--radius);
+  padding: 40px; text-align: center; cursor: pointer;
+  transition: all 0.2s; background: var(--surface2);
+}
+.upload-zone:hover, .upload-zone.dragover { border-color: var(--primary); background: var(--primary-light); }
+.upload-icon { font-size: 40px; margin-bottom: 12px; }
+.upload-zone h3 { font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+.upload-zone p { font-size: 13px; color: var(--text2); }
+
+/* ===== QUIZ ===== */
+.quiz-question-card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 24px;
+  box-shadow: var(--shadow); margin-bottom: 16px;
+}
+.quiz-q-num { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text3); margin-bottom: 8px; }
+.quiz-q-text { font-size: 16px; font-weight: 600; color: var(--text); margin-bottom: 16px; line-height: 1.5; }
+.quiz-options { display: flex; flex-direction: column; gap: 8px; }
+.quiz-option {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); cursor: pointer;
+  transition: all 0.15s; font-size: 14px; background: var(--surface2);
+}
+.quiz-option:hover { border-color: var(--primary); background: var(--primary-light); }
+.quiz-option.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); font-weight: 600; }
+.quiz-option.correct { border-color: var(--success); background: rgba(46,125,50,0.08); color: var(--success); }
+.quiz-option.wrong { border-color: var(--danger); background: rgba(229,57,53,0.08); color: var(--danger); }
+.quiz-opt-letter {
+  width: 26px; height: 26px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 12px; flex-shrink: 0;
+  background: white; border: 1px solid var(--border);
+}
+.quiz-progress { background: var(--border); border-radius: 99px; height: 6px; margin-bottom: 24px; }
+.quiz-progress-bar { height: 100%; background: var(--primary); border-radius: 99px; transition: width 0.4s; }
+
+/* ===== CALENDAR ===== */
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+.cal-header { text-align: center; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text3); padding: 8px 4px; }
+.cal-day {
+  min-height: 80px; background: var(--surface); border-radius: var(--radius-sm);
+  border: 1px solid var(--border); padding: 8px;
+  transition: all 0.15s; position: relative;
+}
+.cal-day:hover { border-color: var(--primary); }
+.cal-day.today { border-color: var(--primary); background: var(--primary-light); }
+.cal-day.other-month { opacity: 0.4; }
+.cal-day-num { font-size: 13px; font-weight: 700; color: var(--text2); }
+.cal-event {
+  font-size: 10px; padding: 2px 6px; border-radius: 4px;
+  margin-top: 4px; cursor: pointer; white-space: nowrap;
+  overflow: hidden; text-overflow: ellipsis; font-weight: 600;
+  transition: opacity 0.15s;
+}
+.cal-event:hover { opacity: 0.8; }
+.event-pillar1 { background: rgba(0,86,210,0.15); color: var(--primary); }
+.event-pillar2 { background: rgba(0,201,167,0.15); color: var(--accent-dark); }
+.event-pillar3 { background: rgba(249,168,37,0.15); color: #B35B00; }
+.event-pillar4 { background: rgba(229,57,53,0.1); color: var(--danger); }
+
+/* ===== ATTENDANCE ===== */
+.attendance-cell {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 12px; font-weight: 700;
+  border: 1px solid var(--border); transition: all 0.15s;
+  flex-shrink: 0;
+}
+.att-present { background: rgba(46,125,50,0.1); color: var(--success); border-color: rgba(46,125,50,0.3); }
+.att-absent { background: rgba(229,57,53,0.08); color: var(--danger); border-color: rgba(229,57,53,0.2); }
+.att-none { background: var(--surface2); color: var(--text3); }
+.att-none:hover { border-color: var(--primary); }
+
+/* ===== PROGRESS BAR ===== */
+.progress-bar { background: var(--border); border-radius: 99px; height: 8px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 99px; transition: width 0.4s; }
+
+/* ===== PILL GROUPS ===== */
+.pill-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.pill {
+  padding: 4px 12px; border-radius: 99px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--border); background: var(--surface2); color: var(--text2);
+  cursor: pointer; transition: all 0.15s;
+}
+.pill.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+/* ===== RESULT SCREEN ===== */
+.result-circle {
+  width: 160px; height: 160px; border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  margin: 0 auto 20px;
+  font-family: var(--font2);
+}
+.result-pct { font-size: 44px; font-weight: 700; line-height: 1; }
+.result-label { font-size: 13px; font-weight: 500; margin-top: 4px; }
+
+/* ===== AI LOADING ===== */
+.ai-loader {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 16px; padding: 48px 24px; text-align: center;
+}
+.ai-spinner {
+  width: 48px; height: 48px; border-radius: 50%;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ===== GUEST VIEW ===== */
+.guest-hero {
+  background: linear-gradient(135deg, var(--primary), #0041A3);
+  border-radius: 20px; padding: 40px; color: white; margin-bottom: 28px;
+  position: relative; overflow: hidden;
+}
+.guest-hero::before {
+  content: ''; position: absolute; top: -40px; right: -40px;
+  width: 250px; height: 250px; border-radius: 50%;
+  background: rgba(255,255,255,0.05);
+}
+.guest-hero h1 { font-size: 32px; font-weight: 800; font-family: var(--font2); margin-bottom: 10px; }
+.guest-hero p { font-size: 16px; opacity: 0.85; max-width: 500px; }
+.pillars-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px; }
+@media(max-width: 900px) { .pillars-grid { grid-template-columns: 1fr 1fr; } }
+.pillar-card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); overflow: hidden;
+  cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+}
+.pillar-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+.pillar-img {
+  height: 140px; width: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 48px;
+}
+.pillar-body { padding: 16px; }
+.pillar-body h3 { font-size: 15px; font-weight: 700; color: var(--text); }
+.pillar-body p { font-size: 13px; color: var(--text2); margin-top: 4px; }
+
+/* REGISTER BTN */
+.reg-btn {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 16px 40px; background: var(--accent-dark);
+  color: white; border: none; border-radius: 99px;
+  font-family: var(--font); font-size: 16px; font-weight: 700;
+  cursor: pointer; box-shadow: 0 4px 20px rgba(0,201,167,0.4);
+  transition: all 0.2s;
+}
+.reg-btn:hover { background: #007A68; transform: translateY(-2px); }
+
+/* ===== SECTION CARD ===== */
+.section-card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 24px;
+  box-shadow: var(--shadow); margin-bottom: 24px;
+}
+.section-card h2 { font-size: 17px; font-weight: 700; font-family: var(--font2); margin-bottom: 16px; }
+
+/* ===== ENGLISH GROUPS ===== */
+.groups-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.group-card {
+  background: var(--surface); border-radius: var(--radius);
+  border: 1px solid var(--border); padding: 20px;
+  cursor: pointer; transition: all 0.2s; box-shadow: var(--shadow);
+}
+.group-card:hover { border-color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.group-card.selected { border-color: var(--primary); background: var(--primary-light); }
+.group-level { font-size: 22px; font-weight: 800; font-family: var(--font2); color: var(--primary); }
+.group-name { font-size: 14px; color: var(--text2); margin-top: 2px; }
+.group-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 13px; color: var(--text3); }
+.group-meta strong { color: var(--text); }
+
+/* ===== NOTIFICATION ===== */
+.notif {
+  position: fixed; top: 20px; right: 20px; z-index: 9999;
+  padding: 12px 20px; border-radius: var(--radius);
+  font-size: 14px; font-weight: 500; color: white;
+  box-shadow: var(--shadow-lg); animation: slideIn 0.3s ease;
+  max-width: 320px;
+}
+@keyframes slideIn { from { transform: translateX(100%); opacity: 0; } }
+.notif-success { background: var(--success); }
+.notif-error { background: var(--danger); }
+.notif-info { background: var(--primary); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); }
+  .main-content { margin-left: 0; padding: 16px; }
+  .login-grid { grid-template-columns: 1fr; }
+  .login-left { display: none; }
+}
+
+/* ===== HIDDEN ===== */
+.page { display: none; }
+.page.active { display: block; }
+</style>
+</head>
+<body>
+
+<!-- ========================= LOGIN ========================= -->
+<div id="loginScreen">
+  <div class="login-grid">
+    <div class="login-left">
+      <div class="login-logo">KBF</div>
+      <div class="login-title">Kemel Bolashaq Foundation</div>
+      <div class="login-tagline">Білім арқылы — болашаққа</div>
+      <div class="login-features" style="margin-top: 40px;">
+        <div class="login-feature">Студенттердің дамуын бақылау</div>
+        <div class="login-feature">ИИ-арқылы тесттер жасау</div>
+        <div class="login-feature">Оқиғалар күнтізбесі</div>
+        <div class="login-feature">Ағылшын курсы топтары</div>
+        <div class="login-feature">Қатысымдылықты мониторинг</div>
+      </div>
+    </div>
+    <div class="login-right">
+      <h2>Жүйеге кіру</h2>
+      <p>Рөліңізді таңдаңыз</p>
+      <div class="role-cards">
+        <div class="role-card" onclick="selectRole('mentor')" id="roleCard-mentor">
+          <div class="role-icon" style="background: rgba(0,86,210,0.1);">🎓</div>
+          <div>
+            <h3>Ментор</h3>
+            <p>Студенттерді басқару, тест қосу, есептер</p>
+          </div>
+        </div>
+        <div class="role-card" onclick="selectRole('student')" id="roleCard-student">
+          <div class="role-icon" style="background: rgba(0,201,167,0.1);">📚</div>
+          <div>
+            <h3>Студент</h3>
+            <p>Тесттер, іс-шаралар, прогресс</p>
+          </div>
+        </div>
+        <div class="role-card" onclick="selectRole('guest')" id="roleCard-guest">
+          <div class="role-icon" style="background: rgba(249,168,37,0.1);">👁️</div>
+          <div>
+            <h3>Қонақ</h3>
+            <p>Жобамен танысу, тіркелу</p>
+          </div>
+        </div>
+      </div>
+      <button class="login-btn" onclick="doLogin()">Кіру →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========================= APP ========================= -->
+<div id="app">
+  <!-- SIDEBAR -->
+  <div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <div class="sidebar-logo-icon">KBF</div>
+        <div>
+          <div class="sidebar-logo-text">KBF Portal</div>
+          <div class="sidebar-logo-sub">Kemel Bolashaq</div>
+        </div>
+      </div>
+      <div class="sidebar-user" style="margin-top:12px">
+        <div class="sidebar-user-name" id="sidebarUserName">—</div>
+        <span class="sidebar-user-role" id="sidebarUserRole">—</span>
+      </div>
+    </div>
+    <nav class="sidebar-nav" id="sidebarNav"></nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" onclick="doLogout()">
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>
+        Шығу
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- ===== MENTOR PAGES ===== -->
+    <!-- DASHBOARD -->
+    <div class="page" id="page-dashboard">
+      <div class="page-header">
+        <div><h1>Басты бет</h1><p>Барлық көрсеткіштер бір жерде</p></div>
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="openModal('addStudentModal')">+ Студент қосу</button>
+        </div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-label">Жалпы студент</div>
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-chip chip-up">▲ Белсенді</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Стипендиаттар</div>
+          <div class="stat-value" id="statScholar">0</div>
+          <div class="stat-sub">Ағымдағы</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Орт. тест нәтижесі</div>
+          <div class="stat-value" id="statAvgScore">—</div>
+          <div class="stat-sub">% дұрыс жауап</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Оқиғалар (бұл ай)</div>
+          <div class="stat-value" id="statEvents">0</div>
+          <div class="stat-sub">Жоспарланған</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Ағылшын топтары</div>
+          <div class="stat-value">5</div>
+          <div class="stat-sub">Beginner → IELTS</div>
+        </div>
+      </div>
+
+      <!-- Recent students -->
+      <div class="table-card">
+        <div class="table-toolbar">
+          <h3>Соңғы студенттер</h3>
+          <button class="btn btn-secondary btn-sm" onclick="switchPage('students')">Барлығын көру</button>
+        </div>
+        <table><thead><tr>
+          <th>Студент</th><th>Санат</th><th>Пән</th><th>Тест нәтижесі</th><th>Белсенділік</th>
+        </tr></thead>
+        <tbody id="recentStudentsTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- STUDENTS PAGE -->
+    <div class="page" id="page-students">
+      <div class="page-header">
+        <div><h1>Студенттер базасы</h1><p id="studentCountLabel">0 студент</p></div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" onclick="exportStudents()">⬇ Excel</button>
+          <button class="btn btn-primary" onclick="openModal('addStudentModal')">+ Қосу</button>
+        </div>
+      </div>
+      <div class="table-card">
+        <div class="table-toolbar">
+          <h3>Барлық студенттер</h3>
+          <input type="text" class="search-input" placeholder="Іздеу..." id="studentSearch" oninput="filterStudents()">
+          <select class="form-select" style="width:auto; padding: 8px 12px;" id="categoryFilter" onchange="filterStudents()">
+            <option value="">Барлық санат</option>
+            <option>Стипендиат</option>
+            <option>Мүмкіндік</option>
+            <option>Байланыс</option>
+          </select>
+        </div>
+        <table><thead><tr>
+          <th>ФАЖ</th><th>Санат</th><th>Пән</th><th>Қала</th><th>Тест</th><th>Ағылшын</th><th>Іс-шара</th><th></th>
+        </tr></thead>
+        <tbody id="studentsTable"></tbody></table>
+      </div>
+    </div>
+
+    <!-- TESTS PAGE (MENTOR) -->
+    <div class="page" id="page-tests-mentor">
+      <div class="page-header">
+        <div><h1>Тест кабинеті</h1><p>ИИ арқылы тест жасау және басқару</p></div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab(this,'testsTab')">Тест жасау</button>
+        <button class="tab" onclick="switchTab(this,'testsTab')">Тест кітапханасы</button>
+        <button class="tab" onclick="switchTab(this,'testsTab')">Нәтижелер</button>
+      </div>
+
+      <!-- Create Test Tab -->
+      <div id="testsTab-0" class="tab-content">
+        <div class="section-card">
+          <h2>Файлдан ИИ тест жасау</h2>
+          <p style="font-size:14px; color:var(--text2); margin-bottom:20px;">PDF, Word, Excel немесе TXT файл жүктеңіз — ИИ сұрақтарды автоматты форматтайды</p>
+
+          <div class="form-row" style="margin-bottom: 16px;">
+            <div class="form-group">
+              <label class="form-label">Пән таңдаңыз</label>
+              <select class="form-select" id="testSubject">
+                <option value="">— Пән —</option>
+                <option>Математика</option>
+                <option>Физика</option>
+                <option>Биология</option>
+                <option>История</option>
+                <option>Ағылшын тілі</option>
+                <option>Қазақ тілі</option>
+                <option>Информатика</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Тест атауы</label>
+              <input type="text" class="form-input" id="testTitle" placeholder="мысалы: Алгебра — I тоқсан">
+            </div>
+          </div>
+
+          <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()" ondragover="handleDrag(event)" ondrop="handleDrop(event)">
+            <div class="upload-icon">📄</div>
+            <h3>Файлды сюда перетащите немесе басыңыз</h3>
+            <p>PDF, Word, Excel, TXT — максимум 10 MB</p>
+            <input type="file" id="fileInput" style="display:none" accept=".pdf,.docx,.xlsx,.txt" onchange="handleFileSelect(event)">
+          </div>
+          <div id="uploadedFileName" style="display:none; margin-top:12px; padding:12px 16px; background:var(--primary-light); border-radius:var(--radius-sm); font-size:14px; color:var(--primary); font-weight:600;"></div>
+
+          <button class="btn btn-primary" style="margin-top:20px; width:100%;" id="generateBtn" onclick="generateTestWithAI()">
+            🤖 ИИ арқылы тест жасау
+          </button>
+          <div id="aiLoader" style="display:none;">
+            <div class="ai-loader">
+              <div class="ai-spinner"></div>
+              <div style="font-weight:600;">ИИ файлды оқып, сұрақтарды форматтауда...</div>
+              <div style="font-size:13px; color:var(--text2);">30-60 секунд қажет</div>
+            </div>
+          </div>
+          <div id="generatedTestPreview" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Library Tab -->
+      <div id="testsTab-1" class="tab-content" style="display:none;">
+        <div class="table-card">
+          <div class="table-toolbar">
+            <h3>Тест кітапханасы</h3>
+            <input type="text" class="search-input" placeholder="Тест іздеу...">
+          </div>
+          <table><thead><tr>
+            <th>Тест атауы</th><th>Пән</th><th>Сұрақ саны</th><th>Жасалған күн</th><th>Өткен студент</th><th></th>
+          </tr></thead>
+          <tbody id="testsLibraryTable"></tbody></table>
+        </div>
+      </div>
+
+      <!-- Results Tab -->
+      <div id="testsTab-2" class="tab-content" style="display:none;">
+        <div class="table-card">
+          <div class="table-toolbar"><h3>Тест нәтижелері</h3></div>
+          <table><thead><tr>
+            <th>Студент</th><th>Тест</th><th>Пән</th><th>Нәтиже</th><th>Уақыт</th><th>Деңгей</th>
+          </tr></thead>
+          <tbody id="testResultsTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- CALENDAR PAGE -->
+    <div class="page" id="page-calendar">
+      <div class="page-header">
+        <div><h1>Іс-шаралар күнтізбесі</h1><p id="calMonthLabel"></p></div>
+        <div class="header-actions">
+          <button class="btn btn-secondary btn-sm" onclick="prevMonth()">← Алдыңғы</button>
+          <button class="btn btn-secondary btn-sm" onclick="nextMonth()">Келесі →</button>
+          <button class="btn btn-primary" onclick="openModal('addEventModal')">+ Іс-шара</button>
+        </div>
+      </div>
+      <div class="calendar-grid">
+        <div class="cal-header">ДС</div><div class="cal-header">СЕ</div>
+        <div class="cal-header">СР</div><div class="cal-header">БЕ</div>
+        <div class="cal-header">ЖМ</div><div class="cal-header">СБ</div>
+        <div class="cal-header">ЖС</div>
+      </div>
+      <div class="calendar-grid" id="calendarDays" style="margin-top:4px;"></div>
+
+      <!-- Events list -->
+      <div class="section-card" style="margin-top: 24px;">
+        <h2>Іс-шаралар тізімі</h2>
+        <div id="eventsList"></div>
+      </div>
+    </div>
+
+    <!-- ENGLISH COURSE PAGE -->
+    <div class="page" id="page-english">
+      <div class="page-header">
+        <div><h1>Ағылшын курсы</h1><p>Топтарды басқару және қатысымдылық</p></div>
+        <div class="header-actions">
+          <button class="btn btn-primary" onclick="openModal('addGroupStudentModal')">+ Студент қосу</button>
+        </div>
+      </div>
+
+      <!-- Groups -->
+      <div class="groups-grid" style="margin-bottom: 24px;" id="englishGroupsGrid"></div>
+
+      <!-- Selected Group Detail -->
+      <div id="groupDetail" style="display:none;">
+        <div class="section-card">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; flex-wrap:wrap; gap:12px;">
+            <div>
+              <h2 id="groupDetailTitle" style="margin-bottom:4px;"></h2>
+              <div style="font-size:13px; color:var(--text2);" id="groupDetailSub"></div>
+            </div>
+            <div style="display:flex; gap:8px;">
+              <button class="btn btn-secondary btn-sm" onclick="prevAttWeek()">← Алдыңғы апта</button>
+              <button class="btn btn-secondary btn-sm" onclick="nextAttWeek()">Келесі апта →</button>
+              <button class="btn btn-success btn-sm" onclick="saveAttendance()">Сақтау</button>
+            </div>
+          </div>
+          <div id="attendanceTable"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== STUDENT PAGES ===== -->
+    <!-- MY TESTS -->
+    <div class="page" id="page-my-tests">
+      <div class="page-header">
+        <div><h1>Менің тесттерім</h1><p>Берілген тесттер</p></div>
+      </div>
+      <div class="tabs">
+        <button class="tab active" onclick="switchTab(this,'myTestsTab')">Жаңа тесттер</button>
+        <button class="tab" onclick="switchTab(this,'myTestsTab')">Нәтижелерім</button>
+      </div>
+      <div id="myTestsTab-0" class="tab-content">
+        <div id="availableTestsList"></div>
+      </div>
+      <div id="myTestsTab-1" class="tab-content" style="display:none;">
+        <div class="table-card">
+          <div class="table-toolbar"><h3>Менің нәтижелерім</h3></div>
+          <table><thead><tr>
+            <th>Тест</th><th>Пән</th><th>Нәтиже</th><th>Деңгей</th><th>Күн</th>
+          </tr></thead>
+          <tbody id="myResultsTable"></tbody></table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAKE TEST -->
+    <div class="page" id="page-take-test">
+      <div id="testContainer"></div>
+    </div>
+
+    <!-- MY EVENTS (STUDENT) -->
+    <div class="page" id="page-my-events">
+      <div class="page-header">
+        <div><h1>Іс-шаралар</h1><p>Қатысуға тіркелу</p></div>
+      </div>
+      <div id="studentEventsList"></div>
+    </div>
+
+    <!-- MY PROGRESS -->
+    <div class="page" id="page-my-progress">
+      <div class="page-header">
+        <div><h1>Менің прогресім</h1></div>
+      </div>
+      <div id="progressContent"></div>
+    </div>
+
+    <!-- ===== GUEST PAGES ===== -->
+    <div class="page" id="page-guest-home">
+      <div class="guest-hero">
+        <h1>Kemel Bolashaq Foundation</h1>
+        <p>Оқушыларды дамытудың 4 бағыты арқылы олардың болашағын қалыптастырамыз</p>
+      </div>
+      <div class="pillars-grid">
+        <div class="pillar-card" onclick="showPillarModal('book')">
+          <div class="pillar-img" style="background: linear-gradient(135deg, #E8F0FE, #B8D0F8);">📚</div>
+          <div class="pillar-body">
+            <h3>Кітап оқу</h3>
+            <p>Ай сайынғы оқу мақсаттары</p>
+          </div>
+        </div>
+        <div class="pillar-card" onclick="showPillarModal('subject')">
+          <div class="pillar-img" style="background: linear-gradient(135deg, #E8FEF5, #A8F0D8);">🔬</div>
+          <div class="pillar-body">
+            <h3>Пәндік білім</h3>
+            <p>Математика, физика, химия...</p>
+          </div>
+        </div>
+        <div class="pillar-card" onclick="showPillarModal('self')">
+          <div class="pillar-img" style="background: linear-gradient(135deg, #FFF8E8, #FFE0A0);">🌱</div>
+          <div class="pillar-body">
+            <h3>Жеке даму</h3>
+            <p>Психология, көшбасшылық</p>
+          </div>
+        </div>
+        <div class="pillar-card" onclick="showPillarModal('social')">
+          <div class="pillar-img" style="background: linear-gradient(135deg, #FEE8E8, #F8B8B8);">🤝</div>
+          <div class="pillar-body">
+            <h3>Социалдық іс-шаралар</h3>
+            <p>Волонтерлік, қайырымдылық</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="section-card">
+        <h2>Жоба көрсеткіштері</h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:20px;">
+          <div style="text-align:center; padding:20px;">
+            <div style="font-size:48px; font-weight:800; font-family:var(--font2); color:var(--primary);" id="statGuest1">0</div>
+            <div style="font-size:14px; color:var(--text2); margin-top:4px;">Жалпы студент</div>
+          </div>
+          <div style="text-align:center; padding:20px;">
+            <div style="font-size:48px; font-weight:800; font-family:var(--font2); color:var(--accent-dark);">4</div>
+            <div style="font-size:14px; color:var(--text2); margin-top:4px;">Даму бағыты</div>
+          </div>
+          <div style="text-align:center; padding:20px;">
+            <div style="font-size:48px; font-weight:800; font-family:var(--font2); color:var(--warning);">5</div>
+            <div style="font-size:14px; color:var(--text2); margin-top:4px;">Ағылшын деңгейі</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align:center; padding: 40px 0;">
+        <button class="reg-btn" onclick="showNotif('Тіркелу беті жақын арада қосылады!', 'info')">
+          ТІРКЕЛУ (ӨТІНІМ БЕРУ) →
+        </button>
+        <p style="margin-top:16px; font-size:13px; color:var(--text2);">
+          <a href="#" onclick="doLogout()" style="color:var(--primary);">Шығу</a>
+        </p>
+      </div>
+    </div>
+
+  </div><!-- /main-content -->
+</div><!-- /app -->
+
+<!-- ========================= MODALS ========================= -->
+
+<!-- Add Student Modal -->
+<div class="modal-overlay" id="addStudentModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>Студент қосу</h2>
+      <button class="modal-close" onclick="closeModal('addStudentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Аты *</label>
+          <input type="text" class="form-input" id="sFirstName" placeholder="Асан">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Тегі *</label>
+          <input type="text" class="form-input" id="sLastName" placeholder="Омаров">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Санат</label>
+          <select class="form-select" id="sCategory">
+            <option>Стипендиат</option>
+            <option>Мүмкіндік</option>
+            <option>Байланыс</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Негізгі пән</label>
+          <select class="form-select" id="sSubject">
+            <option>Математика</option>
+            <option>Физика</option>
+            <option>Биология</option>
+            <option>История</option>
+            <option>Ағылшын тілі</option>
+            <option>Қазақ тілі</option>
+            <option>Информатика</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Қала</label>
+          <input type="text" class="form-input" id="sCity" placeholder="Алматы">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ағылшын тобы</label>
+          <select class="form-select" id="sEnglishGroup">
+            <option value="">Жоқ</option>
+            <option>Beginner</option>
+            <option>Elementary</option>
+            <option>Pre-Intermediate</option>
+            <option>Intermediate</option>
+            <option>IELTS</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Байланыс (телефон / email)</label>
+        <input type="text" class="form-input" id="sContact" placeholder="+7 777 ...">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addStudentModal')">Бас тарту</button>
+      <button class="btn btn-primary" onclick="addStudent()">Қосу</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Event Modal -->
+<div class="modal-overlay" id="addEventModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>Іс-шара қосу</h2>
+      <button class="modal-close" onclick="closeModal('addEventModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Іс-шара атауы *</label>
+        <input type="text" class="form-input" id="evTitle" placeholder="Кітап талқылауы">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Күні *</label>
+          <input type="date" class="form-input" id="evDate">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Уақыты</label>
+          <input type="time" class="form-input" id="evTime">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Бағыт</label>
+          <select class="form-select" id="evPillar">
+            <option value="1">Кітап оқу</option>
+            <option value="2">Пәндік білім</option>
+            <option value="3">Жеке даму</option>
+            <option value="4">Социалдық</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Орын</label>
+          <input type="text" class="form-input" id="evLocation" placeholder="Zoom / оффлайн">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Сипаттама</label>
+        <textarea class="form-textarea" id="evDesc" placeholder="Іс-шара туралы қысқаша..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addEventModal')">Бас тарту</button>
+      <button class="btn btn-primary" onclick="addEvent()">Қосу</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Group Student Modal -->
+<div class="modal-overlay" id="addGroupStudentModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2>Топқа студент қосу</h2>
+      <button class="modal-close" onclick="closeModal('addGroupStudentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Студентті таңдаңыз</label>
+        <select class="form-select" id="groupStudentSelect"></select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Топ</label>
+        <select class="form-select" id="groupSelect">
+          <option>Beginner</option>
+          <option>Elementary</option>
+          <option>Pre-Intermediate</option>
+          <option>Intermediate</option>
+          <option>IELTS</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeModal('addGroupStudentModal')">Бас тарту</button>
+      <button class="btn btn-primary" onclick="addStudentToGroup()">Қосу</button>
+    </div>
+  </div>
+</div>
+
+<!-- Student Detail Modal -->
+<div class="modal-overlay" id="studentDetailModal">
+  <div class="modal-box" style="max-width:640px;">
+    <div class="modal-header">
+      <h2 id="detailModalName">Студент</h2>
+      <button class="modal-close" onclick="closeModal('studentDetailModal')">✕</button>
+    </div>
+    <div class="modal-body" id="detailModalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-danger btn-sm" id="detailDeleteBtn">Жою</button>
+      <button class="btn btn-secondary" onclick="closeModal('studentDetailModal')">Жабу</button>
+    </div>
+  </div>
+</div>
+
+<!-- Pillar Modal (Guest) -->
+<div class="modal-overlay" id="pillarModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <h2 id="pillarModalTitle"></h2>
+      <button class="modal-close" onclick="closeModal('pillarModal')">✕</button>
+    </div>
+    <div class="modal-body" id="pillarModalBody"></div>
+  </div>
+</div>
+
+<!-- ========================= SCRIPT ========================= -->
+<script>
+// ===== DATA STORE =====
+const DB = {
+  currentRole: null,
+  currentUser: null,
+  students: [
+    { id:1, firstName:'Айгерім', lastName:'Сейткали', category:'Стипендиат', subject:'Математика', city:'Алматы', contact:'+7 701 111 2233', englishGroup:'Intermediate', testResults:[], events:[], active:true },
+    { id:2, firstName:'Нұрлан', lastName:'Ахметов', category:'Мүмкіндік', subject:'Физика', city:'Астана', contact:'+7 702 333 4455', englishGroup:'Elementary', testResults:[], events:[], active:true },
+    { id:3, firstName:'Зарина', lastName:'Бекова', category:'Стипендиат', subject:'Биология', city:'Шымкент', contact:'+7 703 555 6677', englishGroup:'IELTS', testResults:[], events:[], active:true },
+    { id:4, firstName:'Дамир', lastName:'Жаксыбеков', category:'Байланыс', subject:'История', city:'Алматы', contact:'+7 707 777 8899', englishGroup:'Pre-Intermediate', testResults:[], events:[], active:true },
+    { id:5, firstName:'Алия', lastName:'Мұсаева', category:'Стипендиат', subject:'Информатика', city:'Тараз', contact:'+7 708 999 0011', englishGroup:'Beginner', testResults:[], events:[], active:true },
+  ],
+  tests: [
+    { id:1, title:'Алгебра негіздері', subject:'Математика', created:'2025-01-15', questions: [
+      { q:'2 + 2 × 3 = ?', options:['8','10','14','12'], correct:0 },
+      { q:'√144 = ?', options:['10','12','14','11'], correct:1 },
+      { q:'5! = ?', options:['60','100','120','110'], correct:2 },
+    ]},
+    { id:2, title:'Ньютон заңдары', subject:'Физика', created:'2025-01-20', questions: [
+      { q:'Бірінші Ньютон заңы нені сипаттайды?', options:['Инерция','Күш','Үдеу','Ырғақ'], correct:0 },
+      { q:'F = ma формуласы — бұл қайсы заң?', options:['Бірінші','Екінші','Үшінші','Жоқ'], correct:1 },
+    ]},
+  ],
+  testResults: [],
+  events: [
+    { id:1, title:'Кітап талқылауы: "Соғыс және бейбітшілік"', date:'2025-02-10', time:'15:00', pillar:1, location:'Zoom', desc:'Толстой романы бойынша топтық талқылау', participants:[] },
+    { id:2, title:'Математика олимпиадасы', date:'2025-02-14', time:'10:00', pillar:2, location:'Оффлайн — Алматы', desc:'Аймақтық математика олимпиадасы', participants:[] },
+    { id:3, title:'Волонтерлік күні', date:'2025-02-20', time:'09:00', pillar:4, location:'Орталық саябақ', desc:'Қала тазалау акциясы', participants:[] },
+  ],
+  englishGroups: {
+    'Beginner': { teacher:'Асем Нұрланова', schedule:'Дүйсенбі, Сәрсенбі 18:00', students:['Алия Мұсаева'] },
+    'Elementary': { teacher:'Ержан Сейткалиев', schedule:'Сейсенбі, Бейсенбі 17:00', students:['Нұрлан Ахметов'] },
+    'Pre-Intermediate': { teacher:'Асем Нұрланова', schedule:'Дүйсенбі, Жұма 19:00', students:['Дамир Жаксыбеков'] },
+    'Intermediate': { teacher:'Гүлнар Досова', schedule:'Сәрсенбі, Жексенбі 16:00', students:['Айгерім Сейткали'] },
+    'IELTS': { teacher:'Ержан Сейткалиев', schedule:'Дүйсенбі–Бейсенбі 20:00', students:['Зарина Бекова'] },
+  },
+  attendance: {},
+  calYear: new Date().getFullYear(),
+  calMonth: new Date().getMonth(),
+  attWeekOffset: 0,
+  selectedGroup: null,
+  uploadedFile: null,
+  activeTest: null,
+  activeTestAnswers: {},
+};
+
+// ===== NAVIGATION CONFIG =====
+const NAV = {
+  mentor: [
+    { section: 'Негізгі' },
+    { id:'dashboard', label:'Басты бет', icon:'grid' },
+    { id:'students', label:'Студенттер', icon:'users' },
+    { section: 'Оқыту' },
+    { id:'tests-mentor', label:'Тесттер (ИИ)', icon:'file-text' },
+    { id:'calendar', label:'Іс-шаралар', icon:'calendar' },
+    { id:'english', label:'Ағылшын курсы', icon:'book' },
+  ],
+  student: [
+    { section: 'Менің беттерім' },
+    { id:'my-tests', label:'Тесттер', icon:'check-square' },
+    { id:'my-events', label:'Іс-шаралар', icon:'calendar' },
+    { id:'my-progress', label:'Прогресім', icon:'bar-chart' },
+  ],
+  guest: [
+    { section: 'Жоба' },
+    { id:'guest-home', label:'Басты бет', icon:'home' },
+  ],
+};
+
+const ICONS = {
+  grid: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>`,
+  users: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>`,
+  'file-text': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>`,
+  calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`,
+  book: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>`,
+  'check-square': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>`,
+  'bar-chart': `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><line x1="2" y1="20" x2="22" y2="20"/></svg>`,
+  home: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+};
+
+// ===== COLORS =====
+const AVATAR_COLORS = ['#0056D2','#00C9A7','#E53935','#F9A825','#6A1B9A','#00838F','#E64A19','#43A047'];
+const SUBJECT_COLORS = { 'Математика':'badge-blue','Физика':'badge-teal','Биология':'badge-green','История':'badge-amber','Ағылшын тілі':'badge-teal','Қазақ тілі':'badge-gray','Информатика':'badge-blue' };
+const CAT_COLORS = { 'Стипендиат':'badge-blue','Мүмкіндік':'badge-green','Байланыс':'badge-amber' };
+const GROUP_COLORS = { 'Beginner':'#4CAF50','Elementary':'#2196F3','Pre-Intermediate':'#FF9800','Intermediate':'#9C27B0','IELTS':'#F44336' };
+const PILLAR_COLORS = { 1:'event-pillar1', 2:'event-pillar2', 3:'event-pillar3', 4:'event-pillar4' };
+
+// ===== HELPERS =====
+function getInitials(s) {
+  const p = s.trim().split(' ');
+  return p.length >= 2 ? (p[0][0]+p[1][0]).toUpperCase() : p[0].slice(0,2).toUpperCase();
+}
+function avatarColor(name) { let h=0; for(let c of name) h=(h<<5)-h+c.charCodeAt(0); return AVATAR_COLORS[Math.abs(h)%AVATAR_COLORS.length]; }
+function scoreLevel(pct) {
+  if(pct>=85) return '<span class="badge badge-green">Өте жақсы</span>';
+  if(pct>=70) return '<span class="badge badge-blue">Жақсы</span>';
+  if(pct>=50) return '<span class="badge badge-amber">Орташа</span>';
+  return '<span class="badge badge-red">Төмен</span>';
+}
+function today() { return new Date().toISOString().split('T')[0]; }
+function showNotif(msg, type='success') {
+  const n = document.createElement('div');
+  n.className = `notif notif-${type}`; n.textContent = msg;
+  document.body.appendChild(n);
+  setTimeout(()=>n.remove(), 3000);
+}
+
+// ===== LOGIN =====
+let selectedRole = 'mentor';
+function selectRole(r) {
+  selectedRole = r;
+  document.querySelectorAll('.role-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('roleCard-'+r).classList.add('active');
+}
+selectRole('mentor');
+
+function doLogin() {
+  DB.currentRole = selectedRole;
+  DB.currentUser = selectedRole === 'student' ? DB.students[0] : null;
+  document.getElementById('loginScreen').style.opacity = '0';
+  setTimeout(()=>{
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    initApp();
+  }, 400);
+}
+function doLogout() {
+  location.reload();
+}
+
+// ===== INIT =====
+function initApp() {
+  buildNav();
+  updateSidebarUser();
+  const firstPage = NAV[DB.currentRole].find(n=>n.id);
+  if(firstPage) switchPage(firstPage.id);
+  updateStats();
+}
+
+function buildNav() {
+  const nav = document.getElementById('sidebarNav');
+  nav.innerHTML = '';
+  (NAV[DB.currentRole]||[]).forEach(item => {
+    if(item.section) {
+      nav.innerHTML += `<div class="nav-section-label">${item.section}</div>`;
+    } else {
+      nav.innerHTML += `<button class="nav-item" id="nav-${item.id}" onclick="switchPage('${item.id}')">${ICONS[item.icon]||''}${item.label}</button>`;
+    }
+  });
+}
+
+function updateSidebarUser() {
+  const names = { mentor:'Ментор Ахметова', student: DB.students[0]?.firstName+' '+DB.students[0]?.lastName, guest:'Қонақ' };
+  const roleLabels = { mentor:'Ментор', student:'Студент', guest:'Қонақ' };
+  const roleClasses = { mentor:'role-mentor', student:'role-student', guest:'role-guest' };
+  document.getElementById('sidebarUserName').textContent = names[DB.currentRole];
+  const span = document.getElementById('sidebarUserRole');
+  span.textContent = roleLabels[DB.currentRole];
+  span.className = 'sidebar-user-role ' + roleClasses[DB.currentRole];
+}
+
+function switchPage(id) {
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  const page = document.getElementById('page-'+id);
+  if(page) page.classList.add('active');
+  const navItem = document.getElementById('nav-'+id);
+  if(navItem) navItem.classList.add('active');
+  // Load page
+  if(id==='dashboard') renderDashboard();
+  if(id==='students') renderStudentsTable();
+  if(id==='calendar') renderCalendar();
+  if(id==='english') renderEnglish();
+  if(id==='my-tests') renderMyTests();
+  if(id==='my-events') renderStudentEvents();
+  if(id==='my-progress') renderProgress();
+  if(id==='tests-mentor') renderTestsLibrary();
+  if(id==='guest-home') { document.getElementById('statGuest1').textContent = DB.students.length; }
+}
+
+// ===== STATS =====
+function updateStats() {
+  document.getElementById('statTotal').textContent = DB.students.length;
+  document.getElementById('statScholar').textContent = DB.students.filter(s=>s.category==='Стипендиат').length;
+  const allScores = DB.testResults.map(r=>r.score);
+  document.getElementById('statAvgScore').textContent = allScores.length ? Math.round(allScores.reduce((a,b)=>a+b,0)/allScores.length)+'%' : '—';
+  document.getElementById('statEvents').textContent = DB.events.length;
+}
+
+// ===== DASHBOARD =====
+function renderDashboard() {
+  updateStats();
+  const tbody = document.getElementById('recentStudentsTable');
+  tbody.innerHTML = DB.students.slice(0,5).map(s => {
+    const color = avatarColor(s.firstName);
+    const scores = DB.testResults.filter(r=>r.studentId===s.id);
+    const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b.score,0)/scores.length) : null;
+    const evCnt = DB.events.filter(e=>e.participants.includes(s.id)).length;
+    return `<tr>
+      <td><div class="td-user">
+        <div class="avatar" style="background:${color}1A; color:${color};">${getInitials(s.firstName+' '+s.lastName)}</div>
+        <div class="td-user-info"><div class="td-user-name">${s.firstName} ${s.lastName}</div><div class="td-user-sub">${s.city}</div></div>
+      </div></td>
+      <td><span class="badge ${CAT_COLORS[s.category]}">${s.category}</span></td>
+      <td><span class="badge ${SUBJECT_COLORS[s.subject]||'badge-gray'}">${s.subject}</span></td>
+      <td>${avg!==null ? `<b>${avg}%</b>` : '<span style="color:var(--text3)">—</span>'}</td>
+      <td>${evCnt > 0 ? `<span class="badge badge-green">${evCnt} іс-шара</span>` : '<span style="color:var(--text3)">0</span>'}</td>
+    </tr>`;
+  }).join('');
+}
+
+// ===== STUDENTS =====
+function renderStudentsTable(filter='', catFilter='') {
+  const s = filter || document.getElementById('studentSearch')?.value || '';
+  const c = catFilter || document.getElementById('categoryFilter')?.value || '';
+  const filtered = DB.students.filter(st => {
+    const name = (st.firstName+' '+st.lastName).toLowerCase();
+    const matchS = !s || name.includes(s.toLowerCase());
+    const matchC = !c || st.category === c;
+    return matchS && matchC;
+  });
+  document.getElementById('studentCountLabel').textContent = filtered.length+' студент';
+  document.getElementById('studentsTable').innerHTML = filtered.map(s => {
+    const color = avatarColor(s.firstName);
+    const scores = DB.testResults.filter(r=>r.studentId===s.id);
+    const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b.score,0)/scores.length) : null;
+    const evCnt = DB.events.filter(e=>e.participants.includes(s.id)).length;
+    const grpColor = GROUP_COLORS[s.englishGroup] || '#888';
+    return `<tr>
+      <td><div class="td-user">
+        <div class="avatar" style="background:${color}1A; color:${color};">${getInitials(s.firstName+' '+s.lastName)}</div>
+        <div class="td-user-info"><div class="td-user-name">${s.firstName} ${s.lastName}</div><div class="td-user-sub">${s.contact}</div></div>
+      </div></td>
+      <td><span class="badge ${CAT_COLORS[s.category]}">${s.category}</span></td>
+      <td><span class="badge ${SUBJECT_COLORS[s.subject]||'badge-gray'}">${s.subject}</span></td>
+      <td>${s.city}</td>
+      <td>${avg!==null ? `<b>${avg}%</b>` : '—'}</td>
+      <td>${s.englishGroup ? `<span class="badge" style="background:${grpColor}20;color:${grpColor};">${s.englishGroup}</span>` : '—'}</td>
+      <td>${evCnt > 0 ? `<span class="badge badge-green">${evCnt}</span>` : '0'}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-secondary btn-sm btn-icon" onclick="viewStudent(${s.id})" title="Толық ақпарат">👁</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteStudent(${s.id})" title="Жою">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+function filterStudents() { renderStudentsTable(); }
+
+function addStudent() {
+  const fn = document.getElementById('sFirstName').value.trim();
+  const ln = document.getElementById('sLastName').value.trim();
+  if(!fn||!ln) { showNotif('Аты-жөнін енгізіңіз!','error'); return; }
+  const s = {
+    id: Date.now(), firstName:fn, lastName:ln,
+    category: document.getElementById('sCategory').value,
+    subject: document.getElementById('sSubject').value,
+    city: document.getElementById('sCity').value,
+    contact: document.getElementById('sContact').value,
+    englishGroup: document.getElementById('sEnglishGroup').value,
+    testResults:[], events:[], active:true,
+  };
+  DB.students.push(s);
+  if(s.englishGroup && DB.englishGroups[s.englishGroup]) {
+    DB.englishGroups[s.englishGroup].students.push(fn+' '+ln);
+  }
+  closeModal('addStudentModal');
+  renderStudentsTable(); updateStats();
+  ['sFirstName','sLastName','sCity','sContact'].forEach(id=>document.getElementById(id).value='');
+  showNotif(fn+' '+ln+' қосылды!');
+}
+
+function deleteStudent(id) {
+  if(!confirm('Студентті жоясыз ба?')) return;
+  DB.students = DB.students.filter(s=>s.id!==id);
+  renderStudentsTable(); updateStats();
+  showNotif('Студент жойылды','error');
+}
+
+function viewStudent(id) {
+  const s = DB.students.find(st=>st.id===id);
+  if(!s) return;
+  const color = avatarColor(s.firstName);
+  const scores = DB.testResults.filter(r=>r.studentId===id);
+  const avg = scores.length ? Math.round(scores.reduce((a,b)=>a+b.score,0)/scores.length) : null;
+  const evs = DB.events.filter(e=>e.participants.includes(id));
+  document.getElementById('detailModalName').textContent = s.firstName+' '+s.lastName;
+  document.getElementById('detailModalBody').innerHTML = `
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
+      <div class="avatar" style="width:56px;height:56px;border-radius:14px;font-size:18px;background:${color}1A;color:${color};">${getInitials(s.firstName+' '+s.lastName)}</div>
+      <div>
+        <div style="font-size:18px;font-weight:700;">${s.firstName} ${s.lastName}</div>
+        <div style="color:var(--text2);font-size:13px;">${s.contact} • ${s.city}</div>
+        <span class="badge ${CAT_COLORS[s.category]}" style="margin-top:4px;">${s.category}</span>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Пән</div>
+        <div style="font-size:15px;font-weight:700;margin-top:4px;">${s.subject}</div>
+      </div>
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Ағылшын тобы</div>
+        <div style="font-size:15px;font-weight:700;margin-top:4px;">${s.englishGroup||'—'}</div>
+      </div>
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Тест нәтижесі (орт.)</div>
+        <div style="font-size:24px;font-weight:800;font-family:var(--font2);margin-top:4px;color:var(--primary);">${avg!==null?avg+'%':'—'}</div>
+      </div>
+      <div style="padding:14px;background:var(--surface2);border-radius:var(--radius-sm);border:1px solid var(--border);">
+        <div style="font-size:11px;color:var(--text3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;">Іс-шараларға қатысуы</div>
+        <div style="font-size:24px;font-weight:800;font-family:var(--font2);margin-top:4px;color:var(--accent-dark);">${evs.length}</div>
+      </div>
+    </div>
+    ${scores.length > 0 ? `<h3 style="font-size:15px;font-weight:700;margin-bottom:10px;">Тест тарихы</h3>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      ${scores.map(r=>{
+        const t = DB.tests.find(tt=>tt.id===r.testId);
+        return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);">
+          <span style="font-size:13px;">${t?.title||'Тест'}</span>
+          <div style="display:flex;align-items:center;gap:8px;"><b>${r.score}%</b>${scoreLevel(r.score)}</div>
+        </div>`;
+      }).join('')}
+    </div>` : ''}
+  `;
+  const delBtn = document.getElementById('detailDeleteBtn');
+  delBtn.onclick = () => { deleteStudent(id); closeModal('studentDetailModal'); };
+  openModal('studentDetailModal');
+}
+
+// ===== TESTS (MENTOR) =====
+function renderTestsLibrary() {
+  const tbody = document.getElementById('testsLibraryTable');
+  if(tbody) tbody.innerHTML = DB.tests.map(t => {
+    const results = DB.testResults.filter(r=>r.testId===t.id);
+    return `<tr>
+      <td><b>${t.title}</b></td>
+      <td><span class="badge ${SUBJECT_COLORS[t.subject]||'badge-gray'}">${t.subject}</span></td>
+      <td>${t.questions.length}</td>
+      <td>${t.created}</td>
+      <td>${results.length}</td>
+      <td><div class="td-actions">
+        <button class="btn btn-primary btn-sm" onclick="previewTestMentor(${t.id})">Қарау</button>
+        <button class="btn btn-danger btn-sm btn-icon" onclick="deleteTest(${t.id})">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+  const rtbody = document.getElementById('testResultsTable');
+  if(rtbody) rtbody.innerHTML = DB.testResults.map(r => {
+    const s = DB.students.find(st=>st.id===r.studentId);
+    const t = DB.tests.find(tt=>tt.id===r.testId);
+    return `<tr>
+      <td>${s?.firstName+' '+s?.lastName||'—'}</td>
+      <td>${t?.title||'—'}</td>
+      <td><span class="badge ${SUBJECT_COLORS[t?.subject]||'badge-gray'}">${t?.subject||'—'}</span></td>
+      <td><b>${r.score}%</b></td>
+      <td>${r.date}</td>
+      <td>${scoreLevel(r.score)}</td>
+    </tr>`;
+  }).join('');
+}
+
+function deleteTest(id) {
+  if(!confirm('Тестті жоясыз ба?')) return;
+  DB.tests = DB.tests.filter(t=>t.id!==id);
+  renderTestsLibrary();
+  showNotif('Тест жойылды','error');
+}
+
+function handleDrag(e) { e.preventDefault(); document.getElementById('uploadZone').classList.add('dragover'); }
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadZone').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if(file) processFile(file);
+}
+function handleFileSelect(e) { processFile(e.target.files[0]); }
+function processFile(file) {
+  DB.uploadedFile = file;
+  const el = document.getElementById('uploadedFileName');
+  el.style.display = 'block';
+  el.innerHTML = `📎 ${file.name} <span style="font-size:12px;color:var(--text2);font-weight:400;">(${(file.size/1024).toFixed(1)} KB)</span>`;
+}
+
+async function generateTestWithAI() {
+  const subject = document.getElementById('testSubject').value;
+  const title = document.getElementById('testTitle').value.trim();
+  if(!subject) { showNotif('Пән таңдаңыз!','error'); return; }
+  if(!title) { showNotif('Тест атауын енгізіңіз!','error'); return; }
+  if(!DB.uploadedFile) { showNotif('Алдымен файл жүктеңіз!','error'); return; }
+
+  document.getElementById('generateBtn').style.display = 'none';
+  document.getElementById('aiLoader').style.display = 'block';
+  document.getElementById('generatedTestPreview').style.display = 'none';
+
+  // Read file
+  const fileText = await new Promise(resolve => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = () => resolve('');
+    if(DB.uploadedFile.name.endsWith('.txt')) { reader.readAsText(DB.uploadedFile); }
+    else { reader.readAsDataURL(DB.uploadedFile); resolve(`[Файл: ${DB.uploadedFile.name}]`); }
+  });
+
+  const prompt = `Сен — білім беру жүйесінің тест жасаушы маманысың. 
+Пән: ${subject}
+Тест атауы: ${title}
+Файл мазмұны (немесе атауы): ${fileText.slice(0, 2000)}
+
+${subject} пәні бойынша 5 сұрақтан тұратын тест жаса. 
+Әрбір сұрақта 4 жауап нұсқасы болсын (A, B, C, D).
+Тек ${subject} пәніне қатысты сұрақтар ғана болсын.
+
+JSON форматында қайтар — тек JSON, ешқандай markdown емес:
+{"questions":[{"q":"сұрақ мәтіні","options":["A","B","C","D"],"correct":0}]}
+correct — дұрыс жауаптың индексі (0-3).`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{ role:'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    const text = data.content?.find(c=>c.type==='text')?.text || '';
+    const clean = text.replace(/```json|```/g,'').trim();
+    const parsed = JSON.parse(clean);
+
+    const newTest = {
+      id: Date.now(),
+      title, subject, created: today(),
+      questions: parsed.questions
+    };
+    DB.tests.push(newTest);
+    document.getElementById('aiLoader').style.display = 'none';
+    document.getElementById('generateBtn').style.display = 'block';
+    showPreviewTest(newTest);
+    showNotif(`"${title}" тесті жасалды! ${parsed.questions.length} сұрақ.`);
+  } catch(err) {
+    document.getElementById('aiLoader').style.display = 'none';
+    document.getElementById('generateBtn').style.display = 'block';
+    // Fallback demo
+    const demoTest = {
+      id: Date.now(), title, subject, created: today(),
+      questions: [
+        { q:`${subject} — негізгі анықтама дегеніміз не?`, options:['Бірінші нұсқа','Екінші нұсқа','Үшінші нұсқа','Төртінші нұсқа'], correct:0 },
+        { q:`${subject} саласындағы ең маңызды ұғым?`, options:['Заң','Теорема','Формула','Принцип'], correct:1 },
+        { q:`${subject} тақырыбы бойынша тест сұрағы №3`, options:['A','B','C','D'], correct:2 },
+        { q:`${subject} бойынша есептеу нәтижесі?`, options:['100','200','300','400'], correct:0 },
+        { q:`${subject} — қорытынды сұрақ`, options:['Дұрыс','Бұрыс','Мүмкін','Жауап жоқ'], correct:0 },
+      ]
+    };
+    DB.tests.push(demoTest);
+    showPreviewTest(demoTest);
+    showNotif('API қосылмаған — демо тест жасалды','info');
+  }
+}
+
+function showPreviewTest(test) {
+  const el = document.getElementById('generatedTestPreview');
+  el.style.display = 'block';
+  el.innerHTML = `
+    <div style="margin-top:20px; padding:20px; background:var(--primary-light); border-radius:var(--radius); border:1px solid rgba(0,86,210,0.2);">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div><b style="font-size:16px;">${test.title}</b> — <span class="badge ${SUBJECT_COLORS[test.subject]||'badge-gray'}">${test.subject}</span></div>
+        <span class="badge badge-green">✓ ${test.questions.length} сұрақ</span>
+      </div>
+      ${test.questions.map((q,i)=>`
+        <div style="padding:12px;background:white;border-radius:8px;margin-bottom:8px;border:1px solid var(--border);">
+          <div style="font-size:13px;color:var(--text3);font-weight:700;margin-bottom:4px;">Сұрақ ${i+1}</div>
+          <div style="font-size:14px;font-weight:600;">${q.q}</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;">
+            ${q.options.map((o,oi)=>`<div style="font-size:12px;padding:4px 8px;background:${oi===q.correct?'rgba(46,125,50,0.1)':'var(--surface2)'};border-radius:4px;color:${oi===q.correct?'var(--success)':'var(--text2)'};font-weight:${oi===q.correct?'700':'400'};">${['A','B','C','D'][oi]}. ${o}${oi===q.correct?' ✓':''}</div>`).join('')}
+          </div>
+        </div>
+      `).join('')}
+    </div>`;
+}
+
+function previewTestMentor(id) {
+  const t = DB.tests.find(tt=>tt.id===id);
+  if(t) showPreviewTest(t);
+  switchPage('tests-mentor');
+}
+
+// ===== CALENDAR =====
+function renderCalendar() {
+  const months = ['Қаңтар','Ақпан','Наурыз','Сәуір','Мамыр','Маусым','Шілде','Тамыз','Қыркүйек','Қазан','Қараша','Желтоқсан'];
+  const y = DB.calYear, m = DB.calMonth;
+  document.getElementById('calMonthLabel').textContent = months[m] + ' ' + y;
+  const firstDay = new Date(y, m, 1).getDay();
+  const offset = (firstDay + 6) % 7;
+  const daysInMonth = new Date(y, m+1, 0).getDate();
+  const daysInPrev = new Date(y, m, 0).getDate();
+  const today = new Date();
+
+  let html = '';
+  // Prev month days
+  for(let i=offset-1; i>=0; i--) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${daysInPrev-i}</div></div>`;
+  }
+  // Current month
+  for(let d=1; d<=daysInMonth; d++) {
+    const dateStr = `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = today.getFullYear()===y && today.getMonth()===m && today.getDate()===d;
+    const dayEvents = DB.events.filter(e=>e.date===dateStr);
+    html += `<div class="cal-day${isToday?' today':''}">
+      <div class="cal-day-num">${d}</div>
+      ${dayEvents.map(e=>`<div class="cal-event ${PILLAR_COLORS[e.pillar]}" onclick="showEventDetail(${e.id})">${e.title}</div>`).join('')}
+    </div>`;
+  }
+  // Remaining
+  const totalCells = offset + daysInMonth;
+  const remaining = (7 - (totalCells % 7)) % 7;
+  for(let d=1; d<=remaining; d++) {
+    html += `<div class="cal-day other-month"><div class="cal-day-num">${d}</div></div>`;
+  }
+  document.getElementById('calendarDays').innerHTML = html;
+  renderEventsList();
+}
+
+function renderEventsList() {
+  const el = document.getElementById('eventsList');
+  if(!el) return;
+  if(DB.events.length === 0) { el.innerHTML = '<p style="color:var(--text3);">Іс-шаралар жоқ</p>'; return; }
+  el.innerHTML = DB.events.sort((a,b)=>a.date.localeCompare(b.date)).map(e=>`
+    <div style="display:flex;align-items:flex-start;gap:16px;padding:14px;border-radius:var(--radius-sm);border:1px solid var(--border);margin-bottom:8px;background:var(--surface2);">
+      <div style="text-align:center;min-width:44px;background:var(--primary-light);border-radius:10px;padding:8px;">
+        <div style="font-size:18px;font-weight:800;color:var(--primary);font-family:var(--font2);">${e.date.split('-')[2]}</div>
+        <div style="font-size:10px;color:var(--text3);">${e.date.split('-')[1]}</div>
+      </div>
+      <div style="flex:1;">
+        <div style="font-weight:700;font-size:14px;">${e.title}</div>
+        <div style="font-size:12px;color:var(--text2);margin-top:2px;">${e.time} • ${e.location}</div>
+        <div style="font-size:12px;color:var(--text3);margin-top:4px;">${e.desc}</div>
+        <div style="margin-top:6px;font-size:12px;color:var(--text2);">
+          <span class="badge badge-gray">${e.participants.length} қатысушы</span>
+        </div>
+      </div>
+      ${DB.currentRole==='mentor' ? `<button class="btn btn-danger btn-sm btn-icon" onclick="deleteEvent(${e.id})">🗑</button>` : 
+        DB.currentRole==='student' ? `<button class="btn ${e.participants.includes(DB.currentUser?.id)?'btn-secondary':'btn-primary'} btn-sm" onclick="toggleEventParticipation(${e.id})">${e.participants.includes(DB.currentUser?.id)?'✓ Тіркелдім':'Қатысамын'}</button>` : ''}
+    </div>
+  `).join('');
+}
+
+function prevMonth() { if(DB.calMonth===0){DB.calMonth=11;DB.calYear--;}else DB.calMonth--; renderCalendar(); }
+function nextMonth() { if(DB.calMonth===11){DB.calMonth=0;DB.calYear++;}else DB.calMonth++; renderCalendar(); }
+
+function addEvent() {
+  const title = document.getElementById('evTitle').value.trim();
+  const date = document.getElementById('evDate').value;
+  if(!title||!date) { showNotif('Іс-шара атауы мен күнін енгізіңіз!','error'); return; }
+  DB.events.push({
+    id: Date.now(), title, date,
+    time: document.getElementById('evTime').value||'—',
+    pillar: parseInt(document.getElementById('evPillar').value),
+    location: document.getElementById('evLocation').value||'—',
+    desc: document.getElementById('evDesc').value,
+    participants: []
+  });
+  closeModal('addEventModal');
+  renderCalendar(); updateStats();
+  showNotif('Іс-шара қосылды!');
+  ['evTitle','evDate','evTime','evLocation','evDesc'].forEach(id=>document.getElementById(id).value='');
+}
+
+function deleteEvent(id) {
+  DB.events = DB.events.filter(e=>e.id!==id);
+  renderCalendar(); updateStats();
+  showNotif('Іс-шара жойылды','error');
+}
+
+function showEventDetail(id) {
+  const e = DB.events.find(ev=>ev.id===id);
+  showNotif(`${e.title} — ${e.date} ${e.time}`, 'info');
+}
+
+// ===== ENGLISH =====
+const GROUP_ORDER = ['Beginner','Elementary','Pre-Intermediate','Intermediate','IELTS'];
+
+function renderEnglish() {
+  const grid = document.getElementById('englishGroupsGrid');
+  grid.innerHTML = GROUP_ORDER.map(g => {
+    const grp = DB.englishGroups[g];
+    const color = GROUP_COLORS[g];
+    return `<div class="group-card${DB.selectedGroup===g?' selected':''}" onclick="selectGroup('${g}')">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="group-level" style="color:${color};">${g}</div>
+          <div class="group-name">${grp.teacher}</div>
+        </div>
+        <div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;font-family:var(--font2);" style="background:${color}20;color:${color};">${grp.students.length}</div>
+      </div>
+      <div style="margin-top:12px; font-size:12px; color:var(--text3);">${grp.schedule}</div>
+      <div class="group-meta" style="margin-top:10px;">
+        <span><strong>${grp.students.length}</strong> студент</span>
+        <span style="font-size:11px;padding:3px 8px;border-radius:99px;font-weight:600;background:${color}20;color:${color};">${g}</span>
+      </div>
+    </div>`;
+  }).join('');
+  if(DB.selectedGroup) renderAttendance();
+}
+
+function selectGroup(g) {
+  DB.selectedGroup = g;
+  document.getElementById('groupDetail').style.display = 'block';
+  renderEnglish();
+  renderAttendance();
+}
+
+function renderAttendance() {
+  const g = DB.selectedGroup;
+  if(!g) return;
+  const grp = DB.englishGroups[g];
+  document.getElementById('groupDetailTitle').textContent = g + ' тобы';
+  document.getElementById('groupDetailSub').textContent = grp.teacher + ' • ' + grp.schedule;
+
+  // Week dates
+  const today = new Date();
+  const dayOfWeek = today.getDay();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((dayOfWeek+6)%7) + (DB.attWeekOffset*7));
+
+  const weekDays = [];
+  for(let i=0; i<6; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate()+i);
+    weekDays.push(d);
+  }
+
+  const dayNames = ['ДС','СЕ','СР','БЕ','ЖМ','СБ'];
+  const students = grp.students;
+
+  let html = `
+    <div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;min-width:500px;">
+    <thead><tr>
+      <th style="text-align:left;padding:10px 12px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text3);">Студент</th>
+      ${weekDays.map((d,i)=>`<th style="text-align:center;padding:10px 8px;font-size:11px;font-weight:700;color:var(--text3);">
+        <div>${dayNames[i]}</div>
+        <div style="font-size:13px;font-weight:800;color:var(--text);margin-top:2px;">${d.getDate()}</div>
+      </th>`).join('')}
+      <th style="text-align:center;padding:10px;font-size:12px;font-weight:700;color:var(--text3);">%</th>
+    </tr></thead>
+    <tbody>
+    ${students.length === 0 ? `<tr><td colspan="${weekDays.length+2}" style="padding:20px;text-align:center;color:var(--text3);">Топта студент жоқ</td></tr>` :
+      students.map(sName => {
+        const presents = weekDays.filter(d => {
+          const key = `${g}:${sName}:${d.toISOString().split('T')[0]}`;
+          return DB.attendance[key] === 'P';
+        }).length;
+        const pct = Math.round((presents/weekDays.length)*100);
+        const color = avatarColor(sName);
+        return `<tr>
+          <td style="padding:10px 12px;border-top:1px solid var(--border);">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <div class="avatar" style="width:28px;height:28px;border-radius:8px;font-size:11px;background:${color}1A;color:${color};">${getInitials(sName)}</div>
+              <span style="font-size:13px;font-weight:600;">${sName}</span>
+            </div>
+          </td>
+          ${weekDays.map(d=>{
+            const dateStr = d.toISOString().split('T')[0];
+            const key = `${g}:${sName}:${dateStr}`;
+            const val = DB.attendance[key];
+            return `<td style="text-align:center;padding:6px;border-top:1px solid var(--border);">
+              <div class="attendance-cell ${val==='P'?'att-present':val==='A'?'att-absent':'att-none'}" onclick="toggleAtt('${g}','${sName}','${dateStr}')" title="${val||'—'}">
+                ${val==='P'?'✓':val==='A'?'✗':'·'}
+              </div>
+            </td>`;
+          }).join('')}
+          <td style="text-align:center;padding:6px 12px;border-top:1px solid var(--border);">
+            <div style="font-size:13px;font-weight:700;color:${pct>=75?'var(--success)':pct>=50?'var(--warning)':'var(--danger)'};">${pct}%</div>
+          </td>
+        </tr>`;
+      }).join('')}
+    </tbody>
+    </table>
+    </div>
+    <!-- Remove students -->
+    <div style="margin-top:16px;">
+      <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:8px;">Топтан шығару:</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        ${students.map(sName=>`
+          <div style="display:inline-flex;align-items:center;gap:6px;padding:4px 10px;background:var(--surface2);border:1px solid var(--border);border-radius:99px;font-size:12px;">
+            ${sName}
+            <span style="cursor:pointer;color:var(--danger);font-weight:700;" onclick="removeFromGroup('${g}','${sName}')">✕</span>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+  document.getElementById('attendanceTable').innerHTML = html;
+}
+
+function toggleAtt(group, student, date) {
+  const key = `${group}:${student}:${date}`;
+  const cur = DB.attendance[key];
+  DB.attendance[key] = cur==='P'?'A':cur==='A'?undefined:'P';
+  if(!DB.attendance[key]) delete DB.attendance[key];
+  renderAttendance();
+}
+
+function prevAttWeek() { DB.attWeekOffset--; renderAttendance(); }
+function nextAttWeek() { DB.attWeekOffset++; renderAttendance(); }
+function saveAttendance() { showNotif('Қатысымдылық сақталды!'); }
+
+function addStudentToGroup() {
+  const sel = document.getElementById('groupStudentSelect').value;
+  const grp = document.getElementById('groupSelect').value;
+  if(!sel) return;
+  if(!DB.englishGroups[grp].students.includes(sel)) {
+    DB.englishGroups[grp].students.push(sel);
+    // update student record
+    const s = DB.students.find(st=>(st.firstName+' '+st.lastName)===sel);
+    if(s) s.englishGroup = grp;
+  }
+  closeModal('addGroupStudentModal');
+  renderEnglish();
+  showNotif(`${sel} — ${grp} тобына қосылды!`);
+}
+
+function removeFromGroup(group, studentName) {
+  DB.englishGroups[group].students = DB.englishGroups[group].students.filter(s=>s!==studentName);
+  const s = DB.students.find(st=>(st.firstName+' '+st.lastName)===studentName);
+  if(s && s.englishGroup===group) s.englishGroup = '';
+  renderEnglish();
+  showNotif(`${studentName} топтан шығарылды`, 'error');
+}
+
+// ===== STUDENT TESTS =====
+function renderMyTests() {
+  const mySubject = DB.currentUser?.subject;
+  const available = DB.tests.filter(t => !mySubject || t.subject === mySubject || t.subject === 'Ағылшын тілі');
+  const el = document.getElementById('availableTestsList');
+  el.innerHTML = available.length === 0 ? '<div style="padding:40px;text-align:center;color:var(--text3);">Берілген тест жоқ</div>' :
+    available.map(t => {
+      const myResult = DB.testResults.find(r=>r.testId===t.id && r.studentId===DB.currentUser?.id);
+      return `<div class="section-card" style="margin-bottom:16px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <div>
+            <div style="font-size:16px;font-weight:700;">${t.title}</div>
+            <div style="margin-top:6px;display:flex;gap:8px;align-items:center;">
+              <span class="badge ${SUBJECT_COLORS[t.subject]||'badge-gray'}">${t.subject}</span>
+              <span style="font-size:12px;color:var(--text3);">${t.questions.length} сұрақ</span>
+            </div>
+          </div>
+          <div style="text-align:right;">
+            ${myResult ? `<div style="font-size:22px;font-weight:800;color:var(--primary);">${myResult.score}%</div>${scoreLevel(myResult.score)}<div style="font-size:11px;color:var(--text3);margin-top:4px;">Өткізілді</div>` :
+              `<button class="btn btn-primary" onclick="startTest(${t.id})">Тест өту →</button>`}
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+
+  const myResults = DB.testResults.filter(r=>r.studentId===DB.currentUser?.id);
+  const tbody = document.getElementById('myResultsTable');
+  if(tbody) tbody.innerHTML = myResults.map(r=>{
+    const t = DB.tests.find(tt=>tt.id===r.testId);
+    return `<tr>
+      <td><b>${t?.title||'—'}</b></td>
+      <td><span class="badge ${SUBJECT_COLORS[t?.subject]||'badge-gray'}">${t?.subject||'—'}</span></td>
+      <td><b>${r.score}%</b></td>
+      <td>${scoreLevel(r.score)}</td>
+      <td>${r.date}</td>
+    </tr>`;
+  }).join('');
+}
+
+function startTest(testId) {
+  const test = DB.tests.find(t=>t.id===testId);
+  DB.activeTest = { testId, questions: [...test.questions], current: 0, answers: {} };
+  switchPage('take-test');
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const {testId, questions, current, answers} = DB.activeTest;
+  const test = DB.tests.find(t=>t.id===testId);
+  const q = questions[current];
+  const total = questions.length;
+  const pct = Math.round((current/total)*100);
+  const container = document.getElementById('testContainer');
+  container.innerHTML = `
+    <div class="page-header">
+      <div><h1>${test.title}</h1><p>${current+1} / ${total} сұрақ</p></div>
+      <span class="badge ${SUBJECT_COLORS[test.subject]||'badge-gray'}">${test.subject}</span>
+    </div>
+    <div class="quiz-progress"><div class="quiz-progress-bar" style="width:${pct}%"></div></div>
+    <div class="quiz-question-card">
+      <div class="quiz-q-num">Сұрақ ${current+1}</div>
+      <div class="quiz-q-text">${q.q}</div>
+      <div class="quiz-options" id="quizOptions">
+        ${q.options.map((o,i)=>`
+          <div class="quiz-option${answers[current]===i?' selected':''}" onclick="selectAnswer(${i})">
+            <div class="quiz-opt-letter">${['A','B','C','D'][i]}</div>
+            ${o}
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-top:20px;">
+      <button class="btn btn-secondary" onclick="${current>0?'prevQuestion()':'switchPage(\'my-tests\')'}">← ${current>0?'Артқа':'Тастау'}</button>
+      <button class="btn btn-primary" onclick="${current<total-1?'nextQuestion()':'finishTest()'}">${current<total-1?'Келесі →':'Аяқтау ✓'}</button>
+    </div>
+  `;
+}
+
+function selectAnswer(i) {
+  DB.activeTest.answers[DB.activeTest.current] = i;
+  renderQuestion();
+}
+function nextQuestion() { DB.activeTest.current++; renderQuestion(); }
+function prevQuestion() { DB.activeTest.current--; renderQuestion(); }
+
+function finishTest() {
+  const {testId, questions, answers} = DB.activeTest;
+  let correct = 0;
+  questions.forEach((q,i) => { if(answers[i]===q.correct) correct++; });
+  const score = Math.round((correct/questions.length)*100);
+  DB.testResults.push({ testId, studentId:DB.currentUser?.id||1, score, date:today(), correct, total:questions.length });
+
+  const container = document.getElementById('testContainer');
+  const test = DB.tests.find(t=>t.id===testId);
+  const bgColor = score>=85?'rgba(46,125,50,0.1)':score>=70?'rgba(0,86,210,0.1)':score>=50?'rgba(249,168,37,0.1)':'rgba(229,57,53,0.1)';
+  const fgColor = score>=85?'var(--success)':score>=70?'var(--primary)':score>=50?'#B35B00':'var(--danger)';
+  container.innerHTML = `
+    <div style="text-align:center;padding:60px 20px;">
+      <div class="result-circle" style="background:${bgColor};border:4px solid ${fgColor};">
+        <div class="result-pct" style="color:${fgColor};">${score}%</div>
+        <div class="result-label" style="color:${fgColor};">${correct}/${questions.length}</div>
+      </div>
+      <h2 style="font-size:24px;font-weight:800;margin-bottom:8px;">${score>=85?'Өте жақсы!':score>=70?'Жақсы!':score>=50?'Орташа':'Жаттығу керек'}</h2>
+      <p style="color:var(--text2);margin-bottom:8px;">${test.title} — ${test.subject}</p>
+      ${scoreLevel(score)}
+      <div style="margin-top:32px; display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <button class="btn btn-secondary" onclick="startTest(${testId})">🔄 Қайта өту</button>
+        <button class="btn btn-primary" onclick="switchPage('my-tests')">← Тесттерге оралу</button>
+      </div>
+    </div>
+  `;
+  updateStats();
+}
+
+// ===== STUDENT EVENTS =====
+function renderStudentEvents() {
+  const el = document.getElementById('studentEventsList');
+  el.innerHTML = DB.events.sort((a,b)=>a.date.localeCompare(b.date)).map(e => {
+    const joined = DB.currentUser && e.participants.includes(DB.currentUser.id);
+    return `<div class="section-card" style="margin-bottom:16px;">
+      <div style="display:flex;gap:16px;align-items:flex-start;">
+        <div style="text-align:center;min-width:52px;background:var(--primary-light);border-radius:12px;padding:10px;">
+          <div style="font-size:22px;font-weight:800;color:var(--primary);font-family:var(--font2);">${e.date.split('-')[2]}</div>
+          <div style="font-size:10px;color:var(--text3);">${e.date.split('-')[1]}/${e.date.split('-')[0].slice(2)}</div>
+        </div>
+        <div style="flex:1;">
+          <div style="font-size:16px;font-weight:700;">${e.title}</div>
+          <div style="font-size:13px;color:var(--text2);margin-top:4px;">${e.time} • ${e.location}</div>
+          <div style="font-size:13px;color:var(--text3);margin-top:6px;">${e.desc}</div>
+          <div style="margin-top:8px;display:flex;align-items:center;gap:10px;">
+            <span class="badge badge-gray">${e.participants.length} тіркелді</span>
+            ${joined ? '<span class="badge badge-green">✓ Мен тіркелдім</span>' : ''}
+          </div>
+        </div>
+        <button class="btn ${joined?'btn-secondary':'btn-primary'} btn-sm" style="flex-shrink:0;" onclick="toggleEventParticipation(${e.id})">${joined?'Тіркелуді болдырмау':'Қатысамын'}</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleEventParticipation(eventId) {
+  if(!DB.currentUser) return;
+  const e = DB.events.find(ev=>ev.id===eventId);
+  if(!e) return;
+  const idx = e.participants.indexOf(DB.currentUser.id);
+  if(idx>=0) { e.participants.splice(idx,1); showNotif('Тіркелу болдырылмады','error'); }
+  else { e.participants.push(DB.currentUser.id); showNotif('Іс-шараға тіркелдіңіз!'); }
+  renderStudentEvents(); renderEventsList();
+}
+
+// ===== PROGRESS =====
+function renderProgress() {
+  const s = DB.currentUser;
+  const results = DB.testResults.filter(r=>r.studentId===s?.id);
+  const evCnt = DB.events.filter(e=>e.participants.includes(s?.id)).length;
+  const avg = results.length ? Math.round(results.reduce((a,b)=>a+b.score,0)/results.length) : 0;
+  document.getElementById('progressContent').innerHTML = `
+    <div class="stats-row" style="margin-bottom:24px;">
+      <div class="stat-card">
+        <div class="stat-label">Орт. тест нәтижесі</div>
+        <div class="stat-value">${avg}%</div>
+        <div class="progress-bar" style="margin-top:8px;"><div class="progress-fill" style="width:${avg}%;background:var(--primary);"></div></div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Өткен тесттер</div>
+        <div class="stat-value">${results.length}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Іс-шаралар</div>
+        <div class="stat-value">${evCnt}</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Ағылшын тобы</div>
+        <div class="stat-value" style="font-size:18px;">${s?.englishGroup||'—'}</div>
+      </div>
+    </div>
+    ${results.length > 0 ? `<div class="section-card">
+      <h2>Тест динамикасы</h2>
+      ${results.map(r=>{
+        const t = DB.tests.find(tt=>tt.id===r.testId);
+        return `<div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--border);">
+          <div style="flex:1;font-size:14px;font-weight:600;">${t?.title||'—'}</div>
+          <div style="width:120px;"><div class="progress-bar"><div class="progress-fill" style="width:${r.score}%;background:${r.score>=70?'var(--success)':r.score>=50?'var(--warning)':'var(--danger)'};"></div></div></div>
+          <div style="font-size:14px;font-weight:800;min-width:44px;text-align:right;">${r.score}%</div>
+          ${scoreLevel(r.score)}
+        </div>`;
+      }).join('')}
+    </div>` : `<div style="text-align:center;padding:60px;color:var(--text3);">Тест нәтижелері жоқ</div>`}
+  `;
+}
+
+// ===== MODAL =====
+function openModal(id) {
+  if(id === 'addGroupStudentModal') {
+    const sel = document.getElementById('groupStudentSelect');
+    sel.innerHTML = DB.students.map(s=>`<option>${s.firstName} ${s.lastName}</option>`).join('');
+    if(DB.selectedGroup) document.getElementById('groupSelect').value = DB.selectedGroup;
+  }
+  document.getElementById(id).classList.add('open');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('open'); });
+});
+
+// ===== GUEST PILLAR =====
+const pillarData = {
+  book: { title:'Кітап оқу бағыты', desc:'Ай сайын ментор студенттерге кітап тізімін береді. Студент кітапты оқып, мазмұнын қысқаша жазып, топпен талқылайды. Мақсат — оқу мәдениетін дамыту, сыни ойлауды жетілдіру.' },
+  subject: { title:'Пәндік білім бағыты', desc:'Математика, физика, химия, биология, история, ағылшын, қазақ тілі бойынша ай сайынғы тесттер мен дәрістер өткізіледі. ИИ арқылы персонализацияланған тест жасалады.' },
+  self: { title:'Жеке даму бағыты', desc:'Психология, эмоционалдық интеллект, уақытты басқару, көшбасшылық дағдылары — вебинарлар, тренингтер, оқулықтар арқылы дамытылады.' },
+  social: { title:'Социалдық іс-шаралар бағыты', desc:'Волонтерлік акциялар, қайырымдылық жобалары, мәдени шаралар, командалық жұмыс. Студенттер белсенді азамат болуды үйренеді.' },
+};
+function showPillarModal(key) {
+  const d = pillarData[key];
+  document.getElementById('pillarModalTitle').textContent = d.title;
+  document.getElementById('pillarModalBody').innerHTML = `<p style="font-size:15px;line-height:1.7;color:var(--text2);">${d.desc}</p>`;
+  openModal('pillarModal');
+}
+
+// ===== TABS =====
+function switchTab(el, prefix) {
+  const tabs = el.parentElement.querySelectorAll('.tab');
+  const idx = Array.from(tabs).indexOf(el);
+  tabs.forEach(t=>t.classList.remove('active')); el.classList.add('active');
+  let i=0;
+  let sibling = el.parentElement.nextElementSibling;
+  while(sibling) {
+    if(sibling.classList.contains('tab-content')) {
+      sibling.style.display = i===idx?'block':'none'; i++;
+    }
+    sibling = sibling.nextElementSibling;
+  }
+  if(prefix==='testsTab' && idx===1) renderTestsLibrary();
+  if(prefix==='testsTab' && idx===2) renderTestsLibrary();
+  if(prefix==='myTestsTab') renderMyTests();
+}
+
+// ===== EXPORT =====
+function exportStudents() {
+  const rows = [['Аты','Тегі','Санат','Пән','Қала','Байланыс','Ағылшын тобы']];
+  DB.students.forEach(s=>rows.push([s.firstName,s.lastName,s.category,s.subject,s.city,s.contact,s.englishGroup]));
+  const csv = rows.map(r=>r.join(',')).join('\n');
+  const blob = new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download='students.csv'; a.click();
+  showNotif('Excel жүктелді!');
+}
+
+</script>
+</body>
+</html>
